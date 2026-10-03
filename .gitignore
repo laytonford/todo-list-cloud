@@ -1,5 +1,9 @@
-.terraform/
-*.tfstate
-*.tfstate.*
-.env
+packaged.yaml
+frontend/config.js
+params.env
 __pycache__/
+*.pyc
+*.zip
+.vscode/
+.DS_Store
+Thumbs.db

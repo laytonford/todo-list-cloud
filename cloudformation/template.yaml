@@ -1,5 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: To-do list website bucket
+Description: To-do list - website bucket, data bucket, API function
+
+Parameters:
+  ApiToken:
+    Type: String
+    NoEcho: true
 
 Resources:
   WebsiteBucket:
@@ -26,6 +31,59 @@ Resources:
             Action: s3:GetObject
             Resource: !Sub "arn:aws:s3:::todo-site-${AWS::AccountId}/*"
 
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "todo-data-${AWS::AccountId}"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  ApiFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: todo-api
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
+      Timeout: 10
+      Code: ../lambda/api
+      Environment:
+        Variables:
+          BUCKET: !Sub "todo-data-${AWS::AccountId}"
+          API_TOKEN: !Ref ApiToken
+
+  ApiFunctionUrl:
+    Type: AWS::Lambda::Url
+    Properties:
+      TargetFunctionArn: !GetAtt ApiFunction.Arn
+      AuthType: NONE
+      Cors:
+        AllowOrigins:
+          - !GetAtt WebsiteBucket.WebsiteURL
+        AllowMethods: [GET, POST, PUT, DELETE]
+        AllowHeaders: [content-type, x-api-token]
+
+  ApiFunctionUrlPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunctionUrl
+      Principal: "*"
+      FunctionUrlAuthType: NONE
+
+  ApiFunctionInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunction
+      Principal: "*"
+      InvokedViaFunctionUrl: true
+
 Outputs:
   WebsiteURL:
     Value: !GetAtt WebsiteBucket.WebsiteURL
+  ApiUrl:
+    Value: !GetAtt ApiFunctionUrl.FunctionUrl
