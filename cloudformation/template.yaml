@@ -10,7 +10,7 @@ Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "todo-site-${AWS::AccountId}"
+      BucketName: !Sub "todo-list-site-${AWS::AccountId}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -29,12 +29,12 @@ Resources:
           - Effect: Allow
             Principal: "*"
             Action: s3:GetObject
-            Resource: !Sub "arn:aws:s3:::todo-site-${AWS::AccountId}/*"
+            Resource: !Sub "${WebsiteBucket.Arn}/*"
 
   DataBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "todo-data-${AWS::AccountId}"
+      BucketName: !Sub "todo-list-data-${AWS::AccountId}"
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -44,7 +44,7 @@ Resources:
   ApiFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: todo-api
+      FunctionName: todo-list-api
       Runtime: python3.12
       Handler: handler.lambda_handler
       Role: !Sub "arn:aws:iam::${AWS::AccountId}:role/LabRole"
@@ -52,7 +52,7 @@ Resources:
       Code: ../lambda/api
       Environment:
         Variables:
-          BUCKET: !Sub "todo-data-${AWS::AccountId}"
+          BUCKET: !Ref DataBucket
           API_TOKEN: !Ref ApiToken
 
   ApiFunctionUrl:
