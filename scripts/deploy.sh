@@ -11,11 +11,10 @@ ARTIFACT_BUCKET="todo-list-artifacts-${ACCOUNT_ID}"
 echo "Using AWS account: $ACCOUNT_ID"
 echo "Using region: $REGION"
 
-if [ -z "$API_TOKEN" ]; then
-    echo "Error: API_TOKEN is not set."
-    echo "Run: export API_TOKEN=your-token"
-    exit 1
-fi
+echo "Generating API token..."
+API_TOKEN=$(python -c "import secrets; print(secrets.token_hex(16))")
+
+echo "API token generated."
 
 if ! aws s3api head-bucket --bucket "$ARTIFACT_BUCKET" 2>/dev/null; then
     echo "Creating artifact bucket..."

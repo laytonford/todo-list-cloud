@@ -1,6 +1,5 @@
 packaged.yaml
 frontend/config.js
-params.env
 __pycache__/
 *.pyc
 *.zip

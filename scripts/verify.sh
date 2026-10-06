@@ -20,16 +20,32 @@ echo "PASS: cloud deployment is available"
 echo
 echo "Checking application data through the cloud..."
 
-if [ -z "$API_TOKEN" ]; then
-    echo "FAIL: API_TOKEN is not set"
-    exit 1
-fi
-
 API_URL=$(aws cloudformation describe-stacks \
     --stack-name "$STACK_NAME" \
     --query "Stacks[0].Outputs[?OutputKey=='ApiUrl'].OutputValue" \
     --output text \
     --region "$REGION")
+
+if [ ! -f "frontend/config.js" ]; then
+    echo "FAIL: frontend/config.js does not exist"
+    echo "Run ./scripts/deploy.sh first"
+    exit 1
+fi
+
+API_TOKEN=$(python -c "
+import re
+with open('frontend/config.js') as f:
+    content = f.read()
+match = re.search(r'token: \"([^\"]+)\"', content)
+if not match:
+    raise SystemExit(1)
+print(match.group(1))
+")
+
+if [ -z "$API_TOKEN" ]; then
+    echo "FAIL: API token could not be found"
+    exit 1
+fi
 
 echo
 echo "API URL:"

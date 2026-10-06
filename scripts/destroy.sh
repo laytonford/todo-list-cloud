@@ -71,4 +71,8 @@ aws s3 rb "s3://$ARTIFACT_BUCKET" \
     --region "$REGION"
 
 echo
+echo "Removing local deployment configuration..."
+rm -f frontend/config.js
+
+echo
 echo "Cloud deployment completely removed."
