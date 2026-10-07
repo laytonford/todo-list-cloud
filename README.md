@@ -17,6 +17,10 @@ The application uses AWS services and follows this request path:
 
 The frontend is hosted using an S3 static website bucket. Application logic is handled by an AWS Lambda function, which stores and retrieves task data from a separate private S3 bucket
 
+The frontend sends GET, POST, PUT and DELETE requests to the Lambda Function URL. The Lambda function validates the API token and then accesses the private S3 data bucket to perform the requested operation. Each task is stored as a separate JSON file in the todos/ directory of the data bucket
+
+The main trust boundary is between the publicly accessible frontend and Lambda endpoint and the private S3 data bucket. The browser cannot directly access the task data bucket. Task data is only read or modified through the Lambda function, which controls access to the bucket
+
 ## Tools
 
 The project uses:
@@ -30,6 +34,19 @@ The project uses:
 - Git – version control
 
 The deployment uses the AWS Academy Learner Lab environment in the `us-east-1` region. The AWS Academy `LabRole` is used by Lambda because the Learner Lab does not allow the creation of a new IAM role
+
+## Configuration
+
+The deployment uses the following configuration:
+
+- AWS region: `us-east-1`
+- CloudFormation stack: `todo-list-cloud`
+- Lambda function: `todo-list-api`
+- Website bucket: `todo-list-site-<AWS account ID>`
+- Data bucket: `todo-list-data-<AWS account ID>`
+- Deployment artifact bucket: `todo-list-artifacts-<AWS account ID>`
+
+The API token is generated automatically by `deploy.sh` for each deployment. It is passed to CloudFormation and used by the Lambda function and frontend. The token is not stored in the repository.
 
 ## Deployment
 
