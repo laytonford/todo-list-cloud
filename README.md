@@ -166,7 +166,6 @@ The following files are generated during deployment and are not stored in Git:
     ├── cloudformation/
     │   └── template.yaml
     ├── frontend/
-    │   ├── config.js
     │   ├── style.css
     │   └── index.html
     ├── lambda/
@@ -177,5 +176,8 @@ The following files are generated during deployment and are not stored in Git:
     │   ├── destroy.sh
     │   └── verify.sh
     ├── .gitignore
-    ├── packaged.yaml
     └── README.md
+
+    Untracked files generated during deployment:
+    ├── packaged.yaml
+    └── frontend/config.js

@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: To-do list - website bucket, data bucket, API function
+Description: Simple Cloud-Based To-Do List
 
 Parameters:
   ApiToken:

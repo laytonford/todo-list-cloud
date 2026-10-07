@@ -1,12 +1,3 @@
-"""API Lambda for the to-do list (same request/response style as the A1 api.php).
-
-Each task is one JSON object in S3 at todos/<id>.json.
-  GET     -> list all tasks
-  POST    {"description": "..."}             -> create
-  PUT     {"id": "...", "completed": bool}   -> update
-  DELETE  {"id": "..."}                      -> delete
-CORS is handled by the Function URL settings in the CloudFormation template.
-"""
 import base64
 import hmac
 import json
